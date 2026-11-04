@@ -2,6 +2,8 @@
 
 > **BLM4587 iOS ile Mobil Uygulama Geliştirme I** — 2026–2027 Güz Yarıyılı  
 > Öğrenci: Zeynep Lal Kaşıkçı · 22290070 · [@lalkasikci](https://github.com/lalkasikci)
+> 1. Hafta Videosu: https://drive.google.com/file/d/10T9040N_DKEMLlaNFFBkiemWlbgJOszE/view?usp=sharing
+> 2. Hafta Videosu: https://drive.google.com/file/d/1xipZLxDvKNv3sCHkfKxVSjfIEht3GKSu/view?usp=sharing
 
 Bandırma sakinlerinin, öğrencilerin ve ziyaretçilerin **yerel bilgilere tek bir uygulamadan** ulaşmasını sağlayan Android mobil uygulaması.
 
@@ -20,8 +22,7 @@ BLM4587-Bandirma-Cepte/
         └── screens/           # Ekranlar
 ```
 
-> **Backend (blm4581):** ASP.NET Core Web API + PostgreSQL (`BandirmaCepteDb`)  
-> Bu Flutter projesi, blm4581 API'sini **değiştirmeden** kullanır.
+> **Backend:** ASP.NET Core Web API + PostgreSQL (`BandirmaCepteDb`)  
 
 ---
 
@@ -40,7 +41,6 @@ BLM4587-Bandirma-Cepte/
 ### Ön Koşullar
 - Flutter 3.29+ (`flutter --version`)
 - Android emülatörü veya fiziksel Android cihaz
-- blm4581 API'sinin çalışır durumda olması: `dotnet run` → `http://localhost:5000`
 
 ### Adımlar
 
@@ -53,14 +53,6 @@ flutter run
 > **Emülatörde** API'ye `10.0.2.2:5000` üzerinden bağlanılır (Android'de localhost = 10.0.2.2).  
 > **Fiziksel cihazda** `lib/services/api_service.dart` içindeki `_baseUrl`'i bilgisayarın LAN IP'si ile değiştir.
 
-### Varsayılan Kullanıcılar (SeedData)
-
-| Kullanıcı | Şifre | Rol |
-|-----------|-------|-----|
-| `admin` | `Admin123!` | Admin |
-| `user` | `User123!` | User |
-
----
 
 ## Kullanılan Paketler
 
