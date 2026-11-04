@@ -8,7 +8,7 @@ plugins {
 android {
     namespace = "com.bandirma.bandirma_cepte"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    ndkVersion = "30.0.16248370"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
