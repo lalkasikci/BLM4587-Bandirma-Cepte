@@ -1,5 +1,5 @@
 // lib/services/api_service.dart
-// Hafta 2: HTTP servis katmanı — blm4581 API'sine bağlanır (BandirmaCepteDb)
+// HTTP servis katmanı — Bandırma Cepte Web API'sine bağlanır.
 //
 // API base URL: http://10.0.2.2:5000 (Android emülatör → localhost)
 // Gerçek cihazda: bilgisayarın LAN IP'si ile değiştir (örn. http://192.168.1.x:5000)
@@ -12,7 +12,10 @@ import '../models/auth_response.dart';
 
 class ApiService {
   // Android emülatöründe localhost'a erişim için 10.0.2.2 kullanılır.
-  static const String _baseUrl = 'http://10.0.2.2:5000';
+  static const String _baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://10.0.2.2:5000',
+  );
 
   // ─── Auth ───────────────────────────────────────────────────────────────────
 
@@ -27,7 +30,9 @@ class ApiService {
         .timeout(const Duration(seconds: 10));
 
     if (response.statusCode == 200) {
-      return AuthResponse.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+      return AuthResponse.fromJson(
+        jsonDecode(response.body) as Map<String, dynamic>,
+      );
     } else if (response.statusCode == 401) {
       throw Exception('Geçersiz kullanıcı adı veya şifre.');
     } else {
@@ -47,10 +52,23 @@ class ApiService {
       final List<dynamic> data = jsonDecode(response.body) as List<dynamic>;
       return data
           .map((e) => News.fromJson(e as Map<String, dynamic>))
+          .where((news) => news.isPublished)
           .toList();
     } else {
       throw Exception('Haberler alınamadı: ${response.statusCode}');
     }
+  }
+
+  /// GET /api/news/{id} — haber ayrıntısını getirir.
+  Future<News> getNewsById(int id) async {
+    final response = await http
+        .get(Uri.parse('$_baseUrl/api/news/$id'))
+        .timeout(const Duration(seconds: 10));
+    if (response.statusCode == 200) {
+      return News.fromJson(jsonDecode(response.body) as Map<String, dynamic>);
+    }
+    if (response.statusCode == 404) throw Exception('Haber bulunamadı.');
+    throw Exception('Haber ayrıntısı alınamadı: ${response.statusCode}');
   }
 
   // ─── Bus Lines ───────────────────────────────────────────────────────────────

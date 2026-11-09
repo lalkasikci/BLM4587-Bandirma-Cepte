@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/news.dart';
+import 'news_detail_screen.dart';
 import '../services/api_service.dart';
 
 class NewsScreen extends StatefulWidget {
@@ -33,10 +34,7 @@ class _NewsScreenState extends State<NewsScreen> {
         backgroundColor: const Color(0xFF1F3864),
         foregroundColor: Colors.white,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _refresh,
-          ),
+          IconButton(icon: const Icon(Icons.refresh), onPressed: _refresh),
         ],
       ),
       body: FutureBuilder<List<News>>(
@@ -78,39 +76,77 @@ class _NewsCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final date = DateFormat('dd MMM yyyy, HH:mm', 'tr').format(news.publishedAt.toLocal());
+    final date = DateFormat(
+      'dd MMM yyyy, HH:mm',
+      'tr',
+    ).format(news.publishedAt.toLocal());
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       elevation: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              news.title,
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1F3864),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap:
+            () => Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => NewsDetailScreen(newsId: news.id),
               ),
             ),
-            const SizedBox(height: 6),
-            Text(
-              news.content,
-              style: const TextStyle(fontSize: 13, color: Colors.black87),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.access_time, size: 14, color: Colors.grey),
-                const SizedBox(width: 4),
-                Text(date, style: const TextStyle(fontSize: 11, color: Colors.grey)),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                news.title,
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1F3864),
+                ),
+              ),
+              if (news.source?.isNotEmpty ?? false) ...[
+                const SizedBox(height: 5),
+                Text(
+                  news.source!,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    color: Color(0xFF147D9A),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
               ],
-            ),
-          ],
+              const SizedBox(height: 6),
+              Text(
+                news.content,
+                style: const TextStyle(fontSize: 13, color: Colors.black87),
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  const Icon(Icons.access_time, size: 14, color: Colors.grey),
+                  const SizedBox(width: 4),
+                  Text(
+                    date,
+                    style: const TextStyle(fontSize: 11, color: Colors.grey),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              const Align(
+                alignment: Alignment.centerRight,
+                child: Text(
+                  'Haberi oku  ›',
+                  style: TextStyle(
+                    color: Color(0xFF147D9A),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

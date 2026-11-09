@@ -42,12 +42,18 @@ class _BusLinesScreenState extends State<BusLinesScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return _ErrorView(message: snapshot.error.toString(), onRetry: _refresh);
+            return _ErrorView(
+              message: snapshot.error.toString(),
+              onRetry: _refresh,
+            );
           }
           final lines = snapshot.data ?? [];
           if (lines.isEmpty) {
             return const Center(
-              child: Text('Otobüs hattı bulunamadı.', style: TextStyle(color: Colors.grey)),
+              child: Text(
+                'Otobüs hattı bulunamadı.',
+                style: TextStyle(color: Colors.grey),
+              ),
             );
           }
           return ListView.separated(
@@ -68,6 +74,7 @@ class _BusLineCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final schedules = line.schedules;
     final times = line.scheduleList;
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -80,7 +87,10 @@ class _BusLineCard extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF1F3864),
                     borderRadius: BorderRadius.circular(8),
@@ -98,32 +108,126 @@ class _BusLineCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     line.route,
-                    style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                const SizedBox(width: 8),
+                const Icon(Icons.chevron_right, color: Colors.blueGrey),
               ],
             ),
-            if (times.isNotEmpty) ...[
+            if (line.description.isNotEmpty) ...[
+              const SizedBox(height: 5),
+              Text(
+                line.description,
+                style: const TextStyle(fontSize: 12, color: Colors.blueGrey),
+              ),
+            ],
+            if (schedules.isNotEmpty) ...[
               const SizedBox(height: 10),
               const Text(
                 'Sefer Saatleri:',
-                style: TextStyle(fontSize: 12, color: Colors.grey, fontWeight: FontWeight.w600),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(height: 6),
+              ...schedules.map(
+                (schedule) => Padding(
+                  padding: const EdgeInsets.only(top: 7),
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF6F9FA),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              schedule.departureTime,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFF147D74),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            const Icon(
+                              Icons.arrow_forward,
+                              size: 14,
+                              color: Colors.blueGrey,
+                            ),
+                            const SizedBox(width: 7),
+                            Expanded(
+                              child: Text(
+                                schedule.dayType,
+                                textAlign: TextAlign.end,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.blueGrey,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          '${schedule.departurePoint.isEmpty ? 'Kalkış' : schedule.departurePoint}  →  ${schedule.arrivalPoint.isEmpty ? line.route : schedule.arrivalPoint}',
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+            if (schedules.isEmpty && times.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              const Text(
+                'Sefer Saatleri:',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               const SizedBox(height: 6),
               Wrap(
                 spacing: 6,
                 runSpacing: 4,
-                children: times
-                    .map((t) => Chip(
-                          label: Text(t, style: const TextStyle(fontSize: 12)),
-                          backgroundColor: const Color(0xFFE8EDF5),
-                          padding: EdgeInsets.zero,
-                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ))
-                    .toList(),
+                children:
+                    times
+                        .map(
+                          (time) => Chip(
+                            label: Text(
+                              time,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            backgroundColor: const Color(0xFFE8EDF5),
+                            padding: EdgeInsets.zero,
+                            materialTapTargetSize:
+                                MaterialTapTargetSize.shrinkWrap,
+                          ),
+                        )
+                        .toList(),
               ),
             ],
+            if (schedules.isEmpty && times.isEmpty)
+              const Padding(
+                padding: EdgeInsets.only(top: 10),
+                child: Text(
+                  'Sefer saati bilgisi bulunmuyor.',
+                  style: TextStyle(color: Colors.blueGrey, fontSize: 12),
+                ),
+              ),
           ],
         ),
       ),

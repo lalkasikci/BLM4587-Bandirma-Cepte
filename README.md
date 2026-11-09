@@ -30,9 +30,8 @@ BLM4587-Bandirma-Cepte/
 
 | Hafta | Tamamlanan | Dosyalar |
 |-------|-----------|---------|
-| **1** | Ortam kurulumu, ana sayfa iskeleti, go_router, README | `main.dart`, `app_router.dart`, `home_screen.dart`, `placeholder_screen.dart` |
-| **2** | HTTP servis katmanı, Dart modelleri, JWT giriş ekranı, Haber + Otobüs ekranları | `api_service.dart`, `auth_service.dart`, `news.dart`, `bus_line.dart`, `auth_response.dart`, `login_screen.dart`, `news_screen.dart`, `bus_lines_screen.dart` |
-| 3–9 | (İlerleyen haftalarda) | — |
+| **1–2** | Flutter başlangıç yapısı, yönlendirme, HTTP servis katmanı, JWT giriş | `main.dart`, `app_router.dart`, `api_service.dart`, `auth_service.dart` |
+| **3** | Alt gezinme, ana sayfa kısayolları, API'den haber listesi ve detayları, hat ve sefer bilgileri | `home_screen.dart`, `news_screen.dart`, `news_detail_screen.dart`, `bus_lines_screen.dart` |
 
 ---
 
@@ -52,6 +51,7 @@ flutter run
 
 > **Emülatörde** API'ye `10.0.2.2:5000` üzerinden bağlanılır (Android'de localhost = 10.0.2.2).  
 > **Fiziksel cihazda** `lib/services/api_service.dart` içindeki `_baseUrl`'i bilgisayarın LAN IP'si ile değiştir.
+> Alternatif olarak API adresi derleme sırasında `--dart-define=API_BASE_URL=http://<adres>:<port>` ile verilebilir.
 
 
 ## Kullanılan Paketler
