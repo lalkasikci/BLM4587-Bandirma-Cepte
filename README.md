@@ -1,10 +1,11 @@
 # BLM4587 — Bandırma Cepte (Flutter)
 
 > **BLM4587 iOS ile Mobil Uygulama Geliştirme I** — 2026–2027 Güz Yarıyılı  
-> Öğrenci: Zeynep Lal Kaşıkçı · 22290070 · [@lalkasikci](https://github.com/lalkasikci)
+> Öğrenci: Zeynep Lal Kaşıkçı
 > 1. Hafta Videosu: https://drive.google.com/file/d/10T9040N_DKEMLlaNFFBkiemWlbgJOszE/view?usp=sharing
 > 2. Hafta Videosu: https://drive.google.com/file/d/1xipZLxDvKNv3sCHkfKxVSjfIEht3GKSu/view?usp=sharing
 > 3. Hafta Videosu: https://drive.google.com/file/d/17lTkUT_YM4BxIJBBeLpSFKVmtALNAvx0/view?usp=sharing
+> 4. Hafta Videosu: https://drive.google.com/file/d/1WdWvgWXyqSgj-TS0i0bXmxLtrATVjjnf/view?usp=sharing
 Bandırma sakinlerinin, öğrencilerin ve ziyaretçilerin **yerel bilgilere tek bir uygulamadan** ulaşmasını sağlayan Android mobil uygulaması.
 
 ---
