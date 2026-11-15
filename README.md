@@ -31,7 +31,7 @@ BLM4587-Bandirma-Cepte/
 | Hafta | Tamamlanan | Dosyalar |
 |-------|-----------|---------|
 | **1–2** | Flutter başlangıç yapısı, yönlendirme, HTTP servis katmanı, JWT giriş | `main.dart`, `app_router.dart`, `api_service.dart`, `auth_service.dart` |
-| **3** | Alt gezinme, ana sayfa kısayolları, API'den haber listesi ve detayları, hat ve sefer bilgileri | `home_screen.dart`, `news_screen.dart`, `news_detail_screen.dart`, `bus_lines_screen.dart` |
+| **3** | Alt gezinme ve geri düğmeleri, ana sayfa logosu, API'den haber/hat/sefer/eczane/acil/depremler; Bandırma hava tahmini | `home_screen.dart`, `news_screen.dart`, `news_detail_screen.dart`, `bus_lines_screen.dart`, `local_info_screens.dart` |
 
 ---
 

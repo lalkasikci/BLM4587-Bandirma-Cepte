@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../services/auth_service.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   final AuthService authService;
   const HomeScreen({super.key, required this.authService});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   static const _shortcuts = [
     (Icons.newspaper_rounded, 'Yerel haberler', '/news', Color(0xFFEAF3FF)),
     (
@@ -32,12 +37,27 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authService = widget.authService;
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
-        title: const Text(
-          'Bandırma Cepte',
-          style: TextStyle(fontWeight: FontWeight.w800),
+        title: Row(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.asset(
+                'assets/bandirma_cepte_icon.png',
+                width: 38,
+                height: 38,
+                fit: BoxFit.cover,
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Text(
+              'Bandırma Cepte',
+              style: TextStyle(fontWeight: FontWeight.w800),
+            ),
+          ],
         ),
         backgroundColor: const Color(0xFF123B5D),
         foregroundColor: Colors.white,
@@ -47,8 +67,22 @@ class HomeScreen extends StatelessWidget {
               icon: const Icon(Icons.account_circle_outlined),
               onSelected: (value) async {
                 if (value == 'logout') {
-                  await authService.logout();
-                  if (context.mounted) context.go('/');
+                  try {
+                    await authService.logout();
+                    if (!context.mounted) return;
+                    setState(() {});
+                    context.go('/');
+                  } catch (error) {
+                    if (!context.mounted) return;
+                    setState(() {});
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Oturum kapatıldı ancak kayıtlı oturum temizlenemedi: $error',
+                        ),
+                      ),
+                    );
+                  }
                 }
               },
               itemBuilder:
@@ -89,24 +123,32 @@ class HomeScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 11,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: .16),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: const Text(
-                    'BANDIRMA’DAN HABERDAR OL',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      letterSpacing: 1.1,
-                      fontWeight: FontWeight.w700,
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(13),
+                      child: Image.asset(
+                        'assets/bandirma_cepte_icon.png',
+                        width: 66,
+                        height: 82,
+                        fit: BoxFit.cover,
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 14),
+                    const Expanded(
+                      child: Text(
+                        'BANDIRMA’DAN\nHABERDAR OL',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          letterSpacing: 1,
+                          fontWeight: FontWeight.w800,
+                          height: 1.45,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16),
                 const Text(

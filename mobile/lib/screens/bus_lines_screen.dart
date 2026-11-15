@@ -4,6 +4,7 @@
 import 'package:flutter/material.dart';
 import '../models/bus_line.dart';
 import '../services/api_service.dart';
+import '../widgets/section_app_bar.dart';
 
 class BusLinesScreen extends StatefulWidget {
   const BusLinesScreen({super.key});
@@ -27,10 +28,9 @@ class _BusLinesScreenState extends State<BusLinesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Otobüs Hatları'),
-        backgroundColor: const Color(0xFF1F3864),
-        foregroundColor: Colors.white,
+      appBar: sectionAppBar(
+        context,
+        'Otobüs Hatları',
         actions: [
           IconButton(icon: const Icon(Icons.refresh), onPressed: _refresh),
         ],

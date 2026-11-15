@@ -1,6 +1,3 @@
-// lib/screens/login_screen.dart
-// Hafta 2: JWT tabanlı giriş ekranının ilk sürümü
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../services/auth_service.dart';
@@ -14,32 +11,61 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final _formKey         = GlobalKey<FormState>();
-  final _usernameCtrl    = TextEditingController();
-  final _passwordCtrl    = TextEditingController();
-  bool _obscurePassword  = true;
-  bool _loading          = false;
+  final _formKey = GlobalKey<FormState>();
+  final _usernameCtrl = TextEditingController();
+  final _passwordCtrl = TextEditingController();
+  final _confirmPasswordCtrl = TextEditingController();
+  bool _obscurePassword = true;
+  bool _isRegistering = false;
+  bool _loading = false;
   String? _errorMessage;
 
   @override
   void dispose() {
     _usernameCtrl.dispose();
     _passwordCtrl.dispose();
+    _confirmPasswordCtrl.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() { _loading = true; _errorMessage = null; });
+    setState(() {
+      _loading = true;
+      _errorMessage = null;
+    });
 
     try {
-      await widget.authService.login(
-        _usernameCtrl.text.trim(),
-        _passwordCtrl.text,
-      );
-      if (mounted) context.go('/');
-    } catch (e) {
-      setState(() => _errorMessage = e.toString().replaceFirst('Exception: ', ''));
+      if (_isRegistering) {
+        await widget.authService.register(
+          _usernameCtrl.text.trim(),
+          _passwordCtrl.text,
+        );
+        if (!mounted) return;
+        setState(() {
+          _isRegistering = false;
+          _passwordCtrl.clear();
+          _confirmPasswordCtrl.clear();
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Hesap oluşturuldu. Şimdi giriş yapabilirsin.'),
+          ),
+        );
+      } else {
+        await widget.authService.login(
+          _usernameCtrl.text.trim(),
+          _passwordCtrl.text,
+        );
+        if (mounted) context.go('/');
+      }
+    } catch (error) {
+      if (mounted) {
+        setState(
+          () =>
+              _errorMessage = error.toString().replaceFirst('Exception: ', ''),
+        );
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -47,10 +73,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final title = _isRegistering ? 'Hesap Oluştur' : 'Giriş Yap';
     return Scaffold(
       backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppBar(
-        title: const Text('Giriş Yap'),
+        title: Text(title),
         backgroundColor: const Color(0xFF1F3864),
         foregroundColor: Colors.white,
         leading: IconButton(
@@ -62,7 +89,9 @@ class _LoginScreenState extends State<LoginScreen> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             elevation: 4,
             child: Padding(
               padding: const EdgeInsets.all(28),
@@ -71,8 +100,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // Logo / başlık
-                    const Icon(Icons.location_city, size: 60, color: Color(0xFF1F3864)),
+                    const Icon(
+                      Icons.location_city,
+                      size: 60,
+                      color: Color(0xFF1F3864),
+                    ),
                     const SizedBox(height: 8),
                     const Text(
                       'Bandırma Cepte',
@@ -83,22 +115,27 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     const SizedBox(height: 24),
-
-                    // Kullanıcı adı
                     TextFormField(
                       controller: _usernameCtrl,
+                      maxLength: 100,
                       decoration: const InputDecoration(
-                        labelText: 'Kullanıcı Adı',
+                        labelText: 'Kullanıcı adı',
                         prefixIcon: Icon(Icons.person),
                         border: OutlineInputBorder(),
                       ),
                       textInputAction: TextInputAction.next,
-                      validator: (v) =>
-                          (v == null || v.trim().isEmpty) ? 'Kullanıcı adı boş olamaz.' : null,
+                      validator: (value) {
+                        final username = value?.trim() ?? '';
+                        if (username.length < 3) {
+                          return 'Kullanıcı adı en az 3 karakter olmalı.';
+                        }
+                        if (username.length > 100) {
+                          return 'Kullanıcı adı en fazla 100 karakter olabilir.';
+                        }
+                        return null;
+                      },
                     ),
-                    const SizedBox(height: 16),
-
-                    // Şifre
+                    const SizedBox(height: 12),
                     TextFormField(
                       controller: _passwordCtrl,
                       obscureText: _obscurePassword,
@@ -108,31 +145,60 @@ class _LoginScreenState extends State<LoginScreen> {
                         border: const OutlineInputBorder(),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                            _obscurePassword
+                                ? Icons.visibility
+                                : Icons.visibility_off,
                           ),
-                          onPressed: () =>
-                              setState(() => _obscurePassword = !_obscurePassword),
+                          onPressed:
+                              () => setState(
+                                () => _obscurePassword = !_obscurePassword,
+                              ),
                         ),
                       ),
-                      textInputAction: TextInputAction.done,
-                      onFieldSubmitted: (_) => _submit(),
-                      validator: (v) =>
-                          (v == null || v.isEmpty) ? 'Şifre boş olamaz.' : null,
+                      textInputAction:
+                          _isRegistering
+                              ? TextInputAction.next
+                              : TextInputAction.done,
+                      onFieldSubmitted: (_) {
+                        if (!_isRegistering) _submit();
+                      },
+                      validator: (value) {
+                        final password = value ?? '';
+                        if (password.isEmpty) return 'Şifre boş olamaz.';
+                        if (_isRegistering && password.length < 8) {
+                          return 'Şifre en az 8 karakter olmalı.';
+                        }
+                        return null;
+                      },
                     ),
-                    const SizedBox(height: 8),
-
-                    // Hata mesajı
+                    if (_isRegistering) ...[
+                      const SizedBox(height: 12),
+                      TextFormField(
+                        controller: _confirmPasswordCtrl,
+                        obscureText: _obscurePassword,
+                        decoration: const InputDecoration(
+                          labelText: 'Şifreyi tekrar gir',
+                          prefixIcon: Icon(Icons.lock_outline),
+                          border: OutlineInputBorder(),
+                        ),
+                        textInputAction: TextInputAction.done,
+                        onFieldSubmitted: (_) => _submit(),
+                        validator:
+                            (value) =>
+                                value != _passwordCtrl.text
+                                    ? 'Şifreler eşleşmiyor.'
+                                    : null,
+                      ),
+                    ],
                     if (_errorMessage != null) ...[
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 12),
                       Text(
                         _errorMessage!,
-                        style: const TextStyle(color: Colors.red, fontSize: 13),
+                        style: const TextStyle(color: Colors.red),
                         textAlign: TextAlign.center,
                       ),
                     ],
                     const SizedBox(height: 20),
-
-                    // Giriş butonu
                     SizedBox(
                       width: double.infinity,
                       height: 48,
@@ -145,24 +211,44 @@ class _LoginScreenState extends State<LoginScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: _loading
-                            ? const SizedBox(
-                                width: 20,
-                                height: 20,
-                                child: CircularProgressIndicator(
-                                  color: Colors.white,
-                                  strokeWidth: 2,
+                        child:
+                            _loading
+                                ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                                : Text(
+                                  _isRegistering
+                                      ? 'Hesap oluştur'
+                                      : 'Giriş yap',
+                                  style: const TextStyle(fontSize: 16),
                                 ),
-                              )
-                            : const Text('Giriş Yap', style: TextStyle(fontSize: 16)),
                       ),
                     ),
-
-                    const SizedBox(height: 12),
-                    const Text(
-                      'Varsayılan: admin / Admin123!',
-                      style: TextStyle(fontSize: 11, color: Colors.grey),
+                    TextButton(
+                      onPressed:
+                          _loading
+                              ? null
+                              : () => setState(() {
+                                _isRegistering = !_isRegistering;
+                                _errorMessage = null;
+                                _formKey.currentState?.reset();
+                              }),
+                      child: Text(
+                        _isRegistering
+                            ? 'Zaten hesabın var mı? Giriş yap'
+                            : 'Hesabın yok mu? Hesap oluştur',
+                      ),
                     ),
+                    if (!_isRegistering)
+                      const Text(
+                        'Varsayılan yönetici: admin / Admin123!',
+                        style: TextStyle(fontSize: 11, color: Colors.grey),
+                      ),
                   ],
                 ),
               ),
