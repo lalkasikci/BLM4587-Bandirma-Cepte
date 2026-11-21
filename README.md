@@ -6,6 +6,7 @@
 > 2. Hafta Videosu: https://drive.google.com/file/d/1xipZLxDvKNv3sCHkfKxVSjfIEht3GKSu/view?usp=sharing
 > 3. Hafta Videosu: https://drive.google.com/file/d/17lTkUT_YM4BxIJBBeLpSFKVmtALNAvx0/view?usp=sharing
 > 4. Hafta Videosu: https://drive.google.com/file/d/1WdWvgWXyqSgj-TS0i0bXmxLtrATVjjnf/view?usp=sharing
+> 5. Hafta Videosu: https://drive.google.com/file/d/1uQl4WG9JR5O1zXWQIvdLjUg4huNwkki-/view?usp=sharing
 Bandırma sakinlerinin, öğrencilerin ve ziyaretçilerin **yerel bilgilere tek bir uygulamadan** ulaşmasını sağlayan Android mobil uygulaması.
 
 ---
