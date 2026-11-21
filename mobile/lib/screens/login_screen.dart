@@ -4,7 +4,12 @@ import '../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   final AuthService authService;
-  const LoginScreen({super.key, required this.authService});
+  final bool adminOnly;
+  const LoginScreen({
+    super.key,
+    required this.authService,
+    this.adminOnly = false,
+  });
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -53,11 +58,22 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
       } else {
-        await widget.authService.login(
+        final auth = await widget.authService.login(
           _usernameCtrl.text.trim(),
           _passwordCtrl.text,
         );
-        if (mounted) context.go('/');
+        if (widget.adminOnly && !auth.isAdmin) {
+          await widget.authService.logout();
+          if (mounted) {
+            setState(
+              () =>
+                  _errorMessage =
+                      'Bu giriş yalnızca yönetici hesaplarına açıktır.',
+            );
+          }
+          return;
+        }
+        if (mounted) context.go(auth.isAdmin ? '/admin' : '/');
       }
     } catch (error) {
       if (mounted) {
@@ -73,12 +89,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final title = _isRegistering ? 'Hesap Oluştur' : 'Giriş Yap';
+    final title =
+        widget.adminOnly
+            ? 'Yönetici Girişi'
+            : _isRegistering
+            ? 'Hesap Oluştur'
+            : 'Giriş Yap';
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor:
+          widget.adminOnly ? const Color(0xFF0C2038) : const Color(0xFFF5F7FA),
       appBar: AppBar(
         title: Text(title),
-        backgroundColor: const Color(0xFF1F3864),
+        backgroundColor:
+            widget.adminOnly
+                ? const Color(0xFF0C2038)
+                : const Color(0xFF1F3864),
         foregroundColor: Colors.white,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -100,20 +125,36 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
-                      Icons.location_city,
-                      size: 60,
-                      color: Color(0xFF1F3864),
+                    CircleAvatar(
+                      radius: 36,
+                      backgroundColor:
+                          widget.adminOnly
+                              ? const Color(0xFFE6B85C)
+                              : const Color(0xFFEAF3FF),
+                      child: Icon(
+                        widget.adminOnly
+                            ? Icons.admin_panel_settings_rounded
+                            : Icons.location_city,
+                        size: 38,
+                        color: const Color(0xFF123B5D),
+                      ),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'Bandırma Cepte',
+                    Text(
+                      widget.adminOnly ? 'Yönetim Merkezi' : 'Bandırma Cepte',
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: Color(0xFF1F3864),
                       ),
                     ),
+                    if (widget.adminOnly) ...[
+                      const SizedBox(height: 6),
+                      const Text(
+                        'Yetkili personel girişi',
+                        style: TextStyle(color: Color(0xFF60758A)),
+                      ),
+                    ],
                     const SizedBox(height: 24),
                     TextFormField(
                       controller: _usernameCtrl,
@@ -229,25 +270,36 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                       ),
                     ),
-                    TextButton(
-                      onPressed:
-                          _loading
-                              ? null
-                              : () => setState(() {
-                                _isRegistering = !_isRegistering;
-                                _errorMessage = null;
-                                _formKey.currentState?.reset();
-                              }),
-                      child: Text(
-                        _isRegistering
-                            ? 'Zaten hesabın var mı? Giriş yap'
-                            : 'Hesabın yok mu? Hesap oluştur',
+                    if (!widget.adminOnly)
+                      TextButton(
+                        onPressed:
+                            _loading
+                                ? null
+                                : () => setState(() {
+                                  _isRegistering = !_isRegistering;
+                                  _errorMessage = null;
+                                  _formKey.currentState?.reset();
+                                }),
+                        child: Text(
+                          _isRegistering
+                              ? 'Zaten hesabın var mı? Giriş yap'
+                              : 'Hesabın yok mu? Hesap oluştur',
+                        ),
                       ),
-                    ),
-                    if (!_isRegistering)
-                      const Text(
-                        'Varsayılan yönetici: admin / Admin123!',
-                        style: TextStyle(fontSize: 11, color: Colors.grey),
+                    if (!widget.adminOnly && !_isRegistering)
+                      TextButton.icon(
+                        onPressed:
+                            _loading ? null : () => context.go('/admin-login'),
+                        icon: const Icon(
+                          Icons.admin_panel_settings_outlined,
+                          size: 18,
+                        ),
+                        label: const Text('Yönetici girişi'),
+                      ),
+                    if (widget.adminOnly)
+                      TextButton(
+                        onPressed: _loading ? null : () => context.go('/login'),
+                        child: const Text('Kullanıcı girişine dön'),
                       ),
                   ],
                 ),

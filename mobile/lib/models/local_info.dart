@@ -20,6 +20,14 @@ class Pharmacy {
     isOnCall: json['isOnCall'] as bool? ?? false,
     phone: json['phone'] as String?,
   );
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'address': address,
+    'isOnCall': isOnCall,
+    'phone': phone,
+  };
 }
 
 class EmergencyContact {
@@ -45,6 +53,14 @@ class EmergencyContact {
         category: json['category'] as String?,
         description: json['description'] as String?,
       );
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'phoneNumber': phoneNumber,
+    'category': category,
+    'description': description,
+  };
 }
 
 class Earthquake {

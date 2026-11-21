@@ -21,15 +21,19 @@ class _NewsDetailScreenState extends State<NewsDetailScreen> {
     _future = _api.getNewsById(widget.newsId);
   }
 
-  void _retry() => setState(() => _future = _api.getNewsById(widget.newsId));
+  void _retry() {
+    setState(() {
+      _future = _api.getNewsById(widget.newsId);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: const Color(0xFFF2F7F6),
       appBar: AppBar(
         title: const Text('Haber Detayı'),
-        backgroundColor: const Color(0xFF123B5D),
+        backgroundColor: const Color(0xFF073B4C),
         foregroundColor: Colors.white,
       ),
       body: FutureBuilder<News>(

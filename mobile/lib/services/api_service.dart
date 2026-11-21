@@ -196,6 +196,79 @@ class ApiService {
     }
   }
 
+  Future<void> createBusLine(BusLine line, {required String token}) async {
+    final response = await http
+        .post(
+          Uri.parse('$_baseUrl/api/buslines'),
+          headers: _authorizedJsonHeaders(token),
+          body: jsonEncode(line.toJson()),
+        )
+        .timeout(const Duration(seconds: 15));
+    if (response.statusCode != 201 && response.statusCode != 200) {
+      throw Exception(_responseError(response, 'Otobüs hattı eklenemedi'));
+    }
+  }
+
+  Future<void> updateBusLine(BusLine line, {required String token}) async {
+    final response = await http
+        .put(
+          Uri.parse('$_baseUrl/api/buslines/${line.id}'),
+          headers: _authorizedJsonHeaders(token),
+          body: jsonEncode(line.toJson()),
+        )
+        .timeout(const Duration(seconds: 15));
+    if (response.statusCode != 204 && response.statusCode != 200) {
+      throw Exception(_responseError(response, 'Otobüs hattı güncellenemedi'));
+    }
+  }
+
+  Future<void> deleteBusLine(int id, {required String token}) async {
+    await _deleteAuthorized('buslines', id, token, 'Otobüs hattı silinemedi');
+  }
+
+  Future<void> createBusSchedule(
+    BusLine line,
+    BusSchedule schedule, {
+    required String token,
+  }) async {
+    final response = await http
+        .post(
+          Uri.parse('$_baseUrl/api/busschedules'),
+          headers: _authorizedJsonHeaders(token),
+          body: jsonEncode(line.scheduleToJson(schedule)),
+        )
+        .timeout(const Duration(seconds: 15));
+    if (response.statusCode != 201 && response.statusCode != 200) {
+      throw Exception(_responseError(response, 'Sefer saati eklenemedi'));
+    }
+  }
+
+  Future<void> updateBusSchedule(
+    BusLine line,
+    BusSchedule schedule, {
+    required String token,
+  }) async {
+    final response = await http
+        .put(
+          Uri.parse('$_baseUrl/api/busschedules/${schedule.id}'),
+          headers: _authorizedJsonHeaders(token),
+          body: jsonEncode(line.scheduleToJson(schedule)),
+        )
+        .timeout(const Duration(seconds: 15));
+    if (response.statusCode != 204 && response.statusCode != 200) {
+      throw Exception(_responseError(response, 'Sefer saati güncellenemedi'));
+    }
+  }
+
+  Future<void> deleteBusSchedule(int id, {required String token}) async {
+    await _deleteAuthorized(
+      'busschedules',
+      id,
+      token,
+      'Sefer saati silinemedi',
+    );
+  }
+
   Future<List<Pharmacy>> getPharmacies() async {
     final response = await http
         .get(Uri.parse('$_baseUrl/api/pharmacies'))
@@ -209,6 +282,29 @@ class ApiService {
         .toList();
   }
 
+  Future<void> createPharmacy(Pharmacy item, {required String token}) async {
+    await _postAuthorized(
+      'pharmacies',
+      item.toJson(),
+      token,
+      'Eczane eklenemedi',
+    );
+  }
+
+  Future<void> updatePharmacy(Pharmacy item, {required String token}) async {
+    await _putAuthorized(
+      'pharmacies',
+      item.id,
+      item.toJson(),
+      token,
+      'Eczane güncellenemedi',
+    );
+  }
+
+  Future<void> deletePharmacy(int id, {required String token}) async {
+    await _deleteAuthorized('pharmacies', id, token, 'Eczane silinemedi');
+  }
+
   Future<List<EmergencyContact>> getEmergencyContacts() async {
     final response = await http
         .get(Uri.parse('$_baseUrl/api/emergencycontacts'))
@@ -220,6 +316,94 @@ class ApiService {
     return data
         .map((item) => EmergencyContact.fromJson(item as Map<String, dynamic>))
         .toList();
+  }
+
+  Future<void> createEmergencyContact(
+    EmergencyContact item, {
+    required String token,
+  }) async {
+    await _postAuthorized(
+      'emergencycontacts',
+      item.toJson(),
+      token,
+      'Acil numara eklenemedi',
+    );
+  }
+
+  Future<void> updateEmergencyContact(
+    EmergencyContact item, {
+    required String token,
+  }) async {
+    await _putAuthorized(
+      'emergencycontacts',
+      item.id,
+      item.toJson(),
+      token,
+      'Acil numara güncellenemedi',
+    );
+  }
+
+  Future<void> deleteEmergencyContact(int id, {required String token}) async {
+    await _deleteAuthorized(
+      'emergencycontacts',
+      id,
+      token,
+      'Acil numara silinemedi',
+    );
+  }
+
+  Future<void> _postAuthorized(
+    String path,
+    Map<String, dynamic> body,
+    String token,
+    String fallback,
+  ) async {
+    final response = await http
+        .post(
+          Uri.parse('$_baseUrl/api/$path'),
+          headers: _authorizedJsonHeaders(token),
+          body: jsonEncode(body),
+        )
+        .timeout(const Duration(seconds: 15));
+    if (response.statusCode != 201 && response.statusCode != 200) {
+      throw Exception(_responseError(response, fallback));
+    }
+  }
+
+  Future<void> _putAuthorized(
+    String path,
+    int id,
+    Map<String, dynamic> body,
+    String token,
+    String fallback,
+  ) async {
+    final response = await http
+        .put(
+          Uri.parse('$_baseUrl/api/$path/$id'),
+          headers: _authorizedJsonHeaders(token),
+          body: jsonEncode(body),
+        )
+        .timeout(const Duration(seconds: 15));
+    if (response.statusCode != 204 && response.statusCode != 200) {
+      throw Exception(_responseError(response, fallback));
+    }
+  }
+
+  Future<void> _deleteAuthorized(
+    String path,
+    int id,
+    String token,
+    String fallback,
+  ) async {
+    final response = await http
+        .delete(
+          Uri.parse('$_baseUrl/api/$path/$id'),
+          headers: {'Authorization': 'Bearer $token'},
+        )
+        .timeout(const Duration(seconds: 15));
+    if (response.statusCode != 204 && response.statusCode != 200) {
+      throw Exception(_responseError(response, fallback));
+    }
   }
 
   Future<List<Earthquake>> getEarthquakes() async {

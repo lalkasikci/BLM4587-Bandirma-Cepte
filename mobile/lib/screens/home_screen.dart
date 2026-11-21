@@ -12,12 +12,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   static const _shortcuts = [
-    (Icons.newspaper_rounded, 'Yerel haberler', '/news', Color(0xFFEAF3FF)),
+    (Icons.newspaper_rounded, 'Yerel haberler', '/news', Color(0xFFE4F3F0)),
     (
       Icons.directions_bus_rounded,
       'Otobüs saatleri',
       '/bus-lines',
-      Color(0xFFE8F7F3),
+      Color(0xFFE1F4ED),
     ),
     (
       Icons.local_pharmacy_rounded,
@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     final authService = widget.authService;
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: const Color(0xFFF2F7F6),
       appBar: AppBar(
         title: Row(
           children: [
@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
         ),
-        backgroundColor: const Color(0xFF123B5D),
+        backgroundColor: const Color(0xFF073B4C),
         foregroundColor: Colors.white,
         actions: [
           if (authService.isLoggedIn)
@@ -100,10 +100,29 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
             )
           else
-            IconButton(
-              tooltip: 'Giriş yap',
-              onPressed: () => context.push('/login'),
-              icon: const Icon(Icons.login),
+            PopupMenuButton<String>(
+              tooltip: 'Oturum aç',
+              icon: const Icon(Icons.login_rounded),
+              onSelected: (value) => context.push(value),
+              itemBuilder:
+                  (_) => const [
+                    PopupMenuItem(
+                      value: '/login',
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: Icon(Icons.person_outline),
+                        title: Text('Kullanıcı girişi'),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: '/admin-login',
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: Icon(Icons.admin_panel_settings_outlined),
+                        title: Text('Yönetici girişi'),
+                      ),
+                    ),
+                  ],
             ),
         ],
       ),
@@ -115,7 +134,11 @@ class _HomeScreenState extends State<HomeScreen> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24),
               gradient: const LinearGradient(
-                colors: [Color(0xFF123B5D), Color(0xFF147D9A)],
+                colors: [
+                  Color(0xFF073B4C),
+                  Color(0xFF087E8B),
+                  Color(0xFF20A39E),
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -174,10 +197,77 @@ class _HomeScreenState extends State<HomeScreen> {
                     avatar: Icon(Icons.admin_panel_settings, size: 18),
                     label: Text('Yönetici oturumu açık'),
                   ),
+                  const SizedBox(height: 8),
+                  OutlinedButton.icon(
+                    onPressed: () => context.push('/admin'),
+                    icon: const Icon(Icons.admin_panel_settings),
+                    label: const Text('Yönetim panelini aç'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      side: const BorderSide(color: Colors.white70),
+                    ),
+                  ),
                 ],
               ],
             ),
           ),
+          if (!authService.isLoggedIn) ...[
+            const SizedBox(height: 14),
+            Material(
+              color: const Color(0xFF102B49),
+              borderRadius: BorderRadius.circular(18),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(18),
+                onTap: () => context.push('/admin-login'),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: const Color(0x33E6B85C),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: const Icon(
+                          Icons.admin_panel_settings_rounded,
+                          color: Color(0xFFE6B85C),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Yönetici misiniz?',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            SizedBox(height: 3),
+                            Text(
+                              'Yönetim paneline giriş yapın',
+                              style: TextStyle(
+                                color: Color(0xFFD9E6ED),
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Icon(
+                        Icons.arrow_forward_rounded,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
           const SizedBox(height: 26),
           const Text(
             'Hızlı erişim',

@@ -13,7 +13,7 @@ AppBar sectionAppBar(
     onPressed: () => context.go('/'),
   ),
   title: Text(title),
-  backgroundColor: const Color(0xFF123B5D),
+  backgroundColor: const Color(0xFF073B4C),
   foregroundColor: Colors.white,
   actions: actions,
   bottom: bottom,

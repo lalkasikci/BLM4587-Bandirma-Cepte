@@ -49,6 +49,23 @@ class BusLine {
         : scheduleCsv.split(',').map((time) => time.trim()).toList();
   }
 
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'lineNumber': lineNumber,
+    'route': route,
+    'description': description,
+    'scheduleCsv': scheduleCsv,
+  };
+
+  Map<String, dynamic> scheduleToJson(BusSchedule schedule) => {
+    'id': schedule.id,
+    'busLineId': id,
+    'departureTime': schedule.departureTime,
+    'departurePoint': schedule.departurePoint,
+    'arrivalPoint': schedule.arrivalPoint,
+    'dayType': schedule.dayType,
+  };
+
   factory BusLine.fromJson(Map<String, dynamic> json) => BusLine(
     id: json['id'] as int? ?? 0,
     lineNumber: json['lineNumber'] as String? ?? '',

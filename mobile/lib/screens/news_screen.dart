@@ -15,31 +15,31 @@ class NewsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
-      appBar: sectionAppBar(
-        context,
-        'Haberler',
-        actions: [
-          if (!authService.isLoggedIn)
-            IconButton(
-              tooltip: 'Yönetici girişi',
-              onPressed: () => context.push('/login'),
-              icon: const Icon(Icons.login_rounded),
-            ),
-        ],
-      ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(14, 14, 14, 28),
-        children: [
-          const _MunicipalNewsTab(),
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 14),
-            child: Divider(height: 1),
+    backgroundColor: const Color(0xFFF2F7F6),
+    appBar: sectionAppBar(
+      context,
+      'Haberler',
+      actions: [
+        if (!authService.isLoggedIn)
+          IconButton(
+            tooltip: 'Yönetici girişi',
+            onPressed: () => context.push('/login'),
+            icon: const Icon(Icons.login_rounded),
           ),
-          _ManagedNewsTab(authService: authService),
-        ],
-      ),
-    );
+      ],
+    ),
+    body: ListView(
+      padding: const EdgeInsets.fromLTRB(14, 14, 14, 28),
+      children: [
+        const _MunicipalNewsTab(),
+        const Padding(
+          padding: EdgeInsets.symmetric(vertical: 14),
+          child: Divider(height: 1),
+        ),
+        _ManagedNewsTab(authService: authService),
+      ],
+    ),
+  );
 }
 
 class _MunicipalNewsTab extends StatefulWidget {
@@ -59,7 +59,11 @@ class _MunicipalNewsTabState extends State<_MunicipalNewsTab> {
     _future = _api.getMunicipalNews();
   }
 
-  void _refresh() => setState(() => _future = _api.getMunicipalNews());
+  void _refresh() {
+    setState(() {
+      _future = _api.getMunicipalNews();
+    });
+  }
 
   @override
   Widget build(BuildContext context) => FutureBuilder<List<MunicipalNews>>(
@@ -124,8 +128,11 @@ class _ManagedNewsTabState extends State<_ManagedNewsTab> {
     _future = _api.getNews(includeUnpublished: _isAdmin);
   }
 
-  void _refresh() =>
-      setState(() => _future = _api.getNews(includeUnpublished: _isAdmin));
+  void _refresh() {
+    setState(() {
+      _future = _api.getNews(includeUnpublished: _isAdmin);
+    });
+  }
 
   Future<void> _editNews({News? news}) async {
     if (!_isAdmin) return;
@@ -203,45 +210,46 @@ class _ManagedNewsTabState extends State<_ManagedNewsTab> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-            _NewsSectionHeading(
-              title: 'Uygulama veritabanındaki haberler',
-              subtitle: 'Yönetilen ve yayınlanan haber kayıtları',
-              icon: Icons.storage_rounded,
-              onRefresh: _refresh,
-              trailing: _isAdmin
-                  ? FilledButton.icon(
+          _NewsSectionHeading(
+            title: 'Uygulama veritabanındaki haberler',
+            subtitle: 'Yönetilen ve yayınlanan haber kayıtları',
+            icon: Icons.storage_rounded,
+            onRefresh: _refresh,
+            trailing:
+                _isAdmin
+                    ? FilledButton.icon(
                       onPressed: () => _editNews(),
                       icon: const Icon(Icons.add),
                       label: const Text('Haber ekle'),
                     )
-                  : null,
-            ),
-            const SizedBox(height: 10),
-            if (items.isEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24),
-                child: _EmptyNewsView(
-                  icon: Icons.storage_outlined,
-                  message:
-                      _isAdmin
-                          ? 'Veritabanında henüz yönetilen haber yok.'
-                          : 'Henüz yayınlanmış haber yok.',
-                  onRefresh: _refresh,
-                ),
-              )
-            else
-              ...items.map(
-                (news) => Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: _ManagedNewsCard(
-                    news: news,
-                    isAdmin: _isAdmin,
-                    onEdit: () => _editNews(news: news),
-                    onDelete: () => _deleteNews(news),
-                  ),
+                    : null,
+          ),
+          const SizedBox(height: 10),
+          if (items.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              child: _EmptyNewsView(
+                icon: Icons.storage_outlined,
+                message:
+                    _isAdmin
+                        ? 'Veritabanında henüz yönetilen haber yok.'
+                        : 'Henüz yayınlanmış haber yok.',
+                onRefresh: _refresh,
+              ),
+            )
+          else
+            ...items.map(
+              (news) => Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: _ManagedNewsCard(
+                  news: news,
+                  isAdmin: _isAdmin,
+                  onEdit: () => _editNews(news: news),
+                  onDelete: () => _deleteNews(news),
                 ),
               ),
-          ],
+            ),
+        ],
       );
     },
   );
@@ -272,7 +280,10 @@ class _NewsSectionHeading extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(title, style: const TextStyle(fontWeight: FontWeight.w800)),
-            Text(subtitle, style: const TextStyle(fontSize: 11, color: Color(0xFF536B77))),
+            Text(
+              subtitle,
+              style: const TextStyle(fontSize: 11, color: Color(0xFF536B77)),
+            ),
           ],
         ),
       ),

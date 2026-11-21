@@ -23,7 +23,11 @@ class _BusLinesScreenState extends State<BusLinesScreen> {
     _future = _api.getBusLines();
   }
 
-  void _refresh() => setState(() => _future = _api.getBusLines());
+  void _refresh() {
+    setState(() {
+      _future = _api.getBusLines();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

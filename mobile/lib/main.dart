@@ -32,20 +32,53 @@ class BandirmaCepteApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF1F3864),
+          seedColor: const Color(0xFF087E8B),
           brightness: Brightness.light,
         ),
         useMaterial3: true,
+        scaffoldBackgroundColor: const Color(0xFFF2F7F6),
         appBarTheme: const AppBarTheme(
           centerTitle: false,
           elevation: 0,
+          backgroundColor: Color(0xFF073B4C),
+          foregroundColor: Colors.white,
+        ),
+        navigationBarTheme: NavigationBarThemeData(
+          backgroundColor: Colors.white,
+          indicatorColor: const Color(0xFFD8F0E9),
+          elevation: 8,
+          height: 72,
+          labelTextStyle: WidgetStateProperty.resolveWith(
+            (states) => TextStyle(
+              fontSize: 12,
+              fontWeight:
+                  states.contains(WidgetState.selected)
+                      ? FontWeight.w800
+                      : FontWeight.w500,
+              color:
+                  states.contains(WidgetState.selected)
+                      ? const Color(0xFF087E8B)
+                      : const Color(0xFF72838D),
+            ),
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: const Color(0xFFF6FAF9),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(14),
+            borderSide: const BorderSide(color: Color(0xFFD9E7E5)),
+          ),
         ),
         cardTheme: CardThemeData(
           color: Colors.white,
           surfaceTintColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderRadius: BorderRadius.all(Radius.circular(20)),
           ),
+          elevation: 1,
+          margin: EdgeInsets.zero,
         ),
       ),
       routerConfig: router,

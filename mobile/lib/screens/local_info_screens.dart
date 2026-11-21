@@ -21,11 +21,15 @@ class _PharmaciesScreenState extends State<PharmaciesScreen> {
     _future = _api.getPharmacies();
   }
 
-  void _refresh() => setState(() => _future = _api.getPharmacies());
+  void _refresh() {
+    setState(() {
+      _future = _api.getPharmacies();
+    });
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: const Color(0xFFF5F7FA),
+    backgroundColor: const Color(0xFFF2F7F6),
     appBar: sectionAppBar(context, 'Nöbetçi Eczaneler'),
     body: AsyncListView<Pharmacy>(
       future: _future,
@@ -132,11 +136,15 @@ class _EmergencyContactsScreenState extends State<EmergencyContactsScreen> {
     _future = _api.getEmergencyContacts();
   }
 
-  void _refresh() => setState(() => _future = _api.getEmergencyContacts());
+  void _refresh() {
+    setState(() {
+      _future = _api.getEmergencyContacts();
+    });
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: const Color(0xFFF5F7FA),
+    backgroundColor: const Color(0xFFF2F7F6),
     appBar: sectionAppBar(context, 'Acil Numaralar'),
     body: AsyncListView<EmergencyContact>(
       future: _future,
@@ -224,11 +232,15 @@ class _EarthquakesScreenState extends State<EarthquakesScreen> {
     _future = _api.getEarthquakes();
   }
 
-  void _refresh() => setState(() => _future = _api.getEarthquakes());
+  void _refresh() {
+    setState(() {
+      _future = _api.getEarthquakes();
+    });
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: const Color(0xFFF5F7FA),
+    backgroundColor: const Color(0xFFF2F7F6),
     appBar: sectionAppBar(context, 'Deprem Bilgileri'),
     body: AsyncListView<Earthquake>(
       future: _future,
@@ -355,11 +367,15 @@ class _WeatherScreenState extends State<WeatherScreen> {
     _future = _api.getWeather();
   }
 
-  void _refresh() => setState(() => _future = _api.getWeather());
+  void _refresh() {
+    setState(() {
+      _future = _api.getWeather();
+    });
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    backgroundColor: const Color(0xFFF5F7FA),
+    backgroundColor: const Color(0xFFF2F7F6),
     appBar: sectionAppBar(context, 'Bandırma Hava Durumu'),
     body: FutureBuilder<WeatherSnapshot>(
       future: _future,

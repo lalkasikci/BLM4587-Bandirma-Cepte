@@ -8,6 +8,8 @@ import 'screens/login_screen.dart';
 import 'screens/news_screen.dart';
 import 'screens/bus_lines_screen.dart';
 import 'screens/local_info_screens.dart';
+import 'screens/admin_dashboard_screen.dart';
+import 'screens/admin_management_screens.dart';
 import 'services/auth_service.dart';
 
 GoRouter createRouter(AuthService authService) {
@@ -42,11 +44,38 @@ GoRouter createRouter(AuthService authService) {
             path: '/earthquakes',
             builder: (_, __) => const EarthquakesScreen(),
           ),
+          GoRoute(
+            path: '/admin',
+            redirect: (_, __) => _adminRedirect(authService),
+            builder: (_, __) => AdminDashboardScreen(authService: authService),
+          ),
+          GoRoute(
+            path: '/admin/bus-lines',
+            redirect: (_, __) => _adminRedirect(authService),
+            builder: (_, __) => AdminBusLinesScreen(authService: authService),
+          ),
+          GoRoute(
+            path: '/admin/pharmacies',
+            redirect: (_, __) => _adminRedirect(authService),
+            builder: (_, __) => AdminPharmaciesScreen(authService: authService),
+          ),
+          GoRoute(
+            path: '/admin/emergency-contacts',
+            redirect: (_, __) => _adminRedirect(authService),
+            builder:
+                (_, __) =>
+                    AdminEmergencyContactsScreen(authService: authService),
+          ),
         ],
       ),
       GoRoute(
         path: '/login',
         builder: (_, __) => LoginScreen(authService: authService),
+      ),
+      GoRoute(
+        path: '/admin-login',
+        builder:
+            (_, __) => LoginScreen(authService: authService, adminOnly: true),
       ),
     ],
     errorBuilder:
@@ -54,6 +83,12 @@ GoRouter createRouter(AuthService authService) {
           body: Center(child: Text('Sayfa bulunamadı: ${state.uri}')),
         ),
   );
+}
+
+String? _adminRedirect(AuthService authService) {
+  if (!authService.isLoggedIn) return '/admin-login';
+  if (!authService.isAdmin) return '/';
+  return null;
 }
 
 class _MainNavigation extends StatelessWidget {
